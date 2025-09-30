@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MFIT & Fitness</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    
+  <div id="header-placeholder"></div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <video autoplay muted loop playsinline class="hero-video">
+      <source src="assets/images/background.MOV" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+
+    <div class="hero-content">
+      <h1>Welcome to M-FIT GYM</h1>
+      <p>Your personalized health and workout guide</p>
+      <a href="bmi.html" class="btn">Calculate Your BMI</a>
+    </div>
+  </section>
+
+  <!-- Dark About Us Section -->
+  <section class="about-gym-dark">
+    <div class="about-content-flex">
+      <div class="about-text-content">
+        <span class="about-us-tag">ABOUT US</span>
+        <h1>WELCOME TO <br>M-FIT GYM</h1>
+        <p class="about-tagline">Get the body you want at the Gym you love</p>
+        <p>
+          At <strong>MFIT & Fitness</strong>, we believe fitness is not just about lifting weights, 
+          but about building a healthier, stronger, and more confident version of yourself.  
+          Our gym is equipped with state-of-the-art equipment, professional trainers, and an 
+          AI-powered fitness assistant to guide you at every step.
+        </p>
+        <ul>
+          <li>Certified Trainers</li>
+          <li>Modern Equipment</li>
+          <li>Personalized Workout & Diet Plans</li>
+          <li>AI-Powered Progress Tracking</li>
+        </ul>
+        <a href="https://wa.me/9011379090?text=Hi%20I%20want%20to%20join%20M-FIT%20Gym" target="_blank" class="btn-dark">JOIN NOW</a>
+      </div>
+      <div class="about-image">
+        <img src="assets/images/aboutus.jpg" alt="Gym Interior">
+      </div>
+    </div>
+  </section>
+
+  <!-- Tools Section -->
+  <section class="features">
+    <div class="container">
+      <h2>🧠 Explore More AI Tools</h2>
+      <div class="tools-grid">
+        <a href="calories.html" class="tool-btn">
+          <h3>🍎 Calorie & Macro Recommendation</h3>
+          <p>Get personalized calorie needs</p>
+        </a>
+
+        <a href="workout.html" class="tool-btn">
+          <h3>🏋️ Workout Plans</h3>
+          <p>AI-based workout recommendations</p>
+        </a>
+
+        <a href="reminders.html" class="tool-btn">
+          <h3>⏰ Fee Reminder</h3>
+          <p>Get notified before your due date</p>
+        </a>
+      </div>
+
+      <h2>Why Choose Us?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <h3>AI Recommendations</h3>
+          <p>Smart workout & diet suggestions based on your body type and goals.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Progress Tracker</h3>
+          <p>Track your health, workouts, and achievements.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Personal Training</h3>
+          <p>Join discussions, get tips, and stay motivated with peers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <section class="M-FIT-footer">
+    <div class="footer-container">
+      <div class="footer-col brand-col">
+        <div class="footer-logo">
+          <img src="assets/images/m-fit-gym-logo.jpg" alt="m-fit-gym-logo">
+          <span>M-FIT GYM</span>
+        </div>
+        <p>Elevate your fitness journey with us. Our state-of-the-art facility features a full range of cardio equipment and a dedicated strength training zone. 
+          you have everything you need to transform your body.</p>
+        <p class="contact-item">📍 1st Floor, Nakshatra Tower, Kudal, near Sindhudurg Bank.<br>Beside Sindhudurg Bank, near Mathewada</p>
+        <p class="contact-number">+91 9011379090</p>
+      </div>
+      
+      <div class="footer-col links-col">
+        <h3>QUICK LINKS</h3>
+        <ul class="footer-links">
+          <li><a href="about.html">➤ About Us</a></li>
+          <li><a href="https://wa.me/9011379090?text=Hi%20I%20want%20to%20join%20M-FIT%20Gym">➤ Contact</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col links-col">
+        <h3>USEFUL LINKS</h3>
+        <ul class="footer-links">
+           <li><a href="ai-tools.html">AI Tools</a></li>
+        <li><a href="bmi.html">BMI Calculator</a></li>
+        <li><a href="diet.html">AI Diet Plan</a></li>
+        <li><a href="nutrition.html">Nutrition Hub</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col social-col">
+        <h3>FOLLOW US</h3>
+        <div class="social-icons">
+          <a href="https://www.instagram.com/m_fitgym_kudal?igsh=MTd4MmZkcndibTZvZA==" target="_blank"><img src="assets/images/instalogo.png" alt="Instagram"></a>
+        </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2024 M-FIT & Fitness. All rights reserved.</p>
+    </div>
+  </section>
+
+  <script>
+    function logout() {
+      localStorage.removeItem("loggedIn");
+      window.location.href = "login.html";
+    }
+  </script>
+  <script src="js/loadHeader.js"></script>
+
+</body>
+</html>

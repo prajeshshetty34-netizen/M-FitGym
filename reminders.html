@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Fee Reminder - AI Gym</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  <section class="reminder-section">
+    <div class="container">
+      <h1>📩 Set Fee Reminder</h1>
+      <form id="reminderForm">
+        <input type="text" id="userName" placeholder="Your Name" required>
+        <input type="email" id="userEmail" placeholder="Email" required>
+        <input type="date" id="dueDate" required>
+        <button type="submit">Set Reminder</button>
+      </form>
+      <div id="reminderMessage" class="result"></div>
+    </div>
+  </section>
+
+  <script>
+    document.getElementById("reminderForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const name = document.getElementById("userName").value;
+      const email = document.getElementById("userEmail").value;
+      const date = document.getElementById("dueDate").value;
+
+      document.getElementById("reminderMessage").innerHTML =
+        `✅ ${name}, we will remind you at <strong>${email}</strong> before <strong>${date}</strong>`;
+    });
+  </script>
+  <script src="js/loadHeader.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMI Calculator - AI Gym</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="header-placeholder"></div>
+  <section class="bmi-section">
+    <div class="bmi-container">
+      <h1>Calculate Your BMI</h1>
+      <p>Enter your height and weight to find your Body Mass Index.</p>
+
+      <form id="bmiForm">
+        <input type="number" id="height" placeholder="Height in cm" required>
+        <input type="number" id="weight" placeholder="Weight in kg" required>
+        <button type="submit">Calculate</button>
+      </form>
+
+      <div class="result" id="result"></div>
+    </div>
+  </section>
+<script>
+  if (!localStorage.getItem("loggedIn")) {
+    window.location.href = "login.html";
+  }
+</script>
+
+
+  <footer>
+    <p>&copy; 2025 AI Gym. All rights reserved.</p>
+  </footer>
+
+
+  <script src="js/bmi.js"></script>
+<script src="js/loadHeader.js"></script>
+
+
+</body>
+</html>

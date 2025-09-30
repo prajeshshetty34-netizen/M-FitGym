@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Training - MFIT Gym</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+  <!-- Hero Section -->
+  <section class="hero personal-hero">
+    <div class="hero-content">
+      <h1>🏋️ Personal Training</h1>
+      <p>Achieve your goals faster with one-on-one guidance from our expert trainers</p>
+    </div>
+  </section>
+
+  <!-- Why Personal Training -->
+<section class="why-training">
+  <div class="container">
+    <div class="benefits-list">
+      <!-- LEFT SIDE: Heading + List -->
+      <div class="benefits-text">
+        <h2><span class="highlight">🔥 WHY CHOOSE MFIT</span> <br>PERSONAL TRAINING?</h2>
+        <ul>
+          <li><span class="tick">✔️</span> <strong>Internationally Certified Trainers</strong></li>
+          <li><span class="tick">✔️</span> Complimentary <strong>1:1 PT Session</strong> Included</li>
+          <li><span class="tick">✔️</span> <span class="highlight">InBody Body Composition Tracking</span></li>
+          <li><span class="tick">✔️</span> Nutrition Guidance with Our Dietitian</li>
+          <li><span class="tick">✔️</span> Flexible Scheduling</li>
+        </ul>
+        <a href="https://wa.me/9011379090?text=Hi%20I%20want%20to%20join%20M-FIT%20Gym" target="_blank" class="btn-dark">JOIN NOW</a>
+      </div>
+      
+
+      <!-- RIGHT SIDE: Image -->
+      <div class="benefits-img">
+        <img src="assets/images/pt.jpg" alt="Personal Training">
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- How It Works Section -->
+<section class="how-it-works">
+  <div class="container">
+    <h2>⚡ How It Works</h2>
+    <div class="steps-grid">
+
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h3>Book Your Free Personal Training Session</h3>
+        <p>Fill the form and we’ll confirm your slot.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h3>InBody Scan & Goal Setting</h3>
+        <p>Understand your current fitness and define your targets.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h3>Your Complimentary PT Session</h3>
+        <p>Experience a personalised 1:1 workout with a certified trainer.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">4</div>
+        <h3>See the Plan Ahead</h3>
+        <p>Get a customised training + nutrition roadmap if you choose to continue.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="transformations">
+  <h2>GYM Member Transformations</h2>
+
+  <div class="carousel">
+    <div class="carousel-track">
+      <!-- Slide 1 -->
+      <div class="carousel-slide">
+        <img src="assets/images/pt1.jpg" alt="Before After">
+        <p><strong>Sneha, 25:</strong> Lost 12kg in 6 months</p>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="carousel-slide">
+        <img src="assets/images/pt2.jpg" alt="Before After">
+        <p><strong>Rahul, 28:</strong> Built lean muscle with strength training</p>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="carousel-slide">
+        <img src="assets/images/pt3.jpg" alt="Before After">
+        <p><strong>Arjun, 30:</strong> Improved stamina & overall fitness</p>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <button class="carousel-btn prev">&#10094;</button>
+    <button class="carousel-btn next">&#10095;</button>
+  </div>
+</section>
+
+
+  <!-- Trainers Section -->
+  <section class="trainers">
+    <div class="container">
+      <h2>Meet Our Trainers</h2>
+      <div class="trainer-grid">
+       
+        <div class="trainer-card">
+          <img src="assets/images/trainer2.jpg" alt="Trainer">
+          <h3>Prajesh Shetty</h3>
+          <p>2+years of Experience in training feild</p>
+        </div>
+         <div class="trainer-card">
+          <img src="assets/images/trainer 1.jpg" alt="Trainer">
+          <h3>Mainsh bhogte</h3>
+          <p>Certified bodybuilding prep coach<br>Over 100+ Clients<br>8+ Year Of Experience</p>
+        </div>
+        <div class="trainer-card">
+          <img src="assets/images/trainer3.jpg" alt="Trainer">
+          <h3>Viraj Sawant </h3>
+          <p>2+years of Experience in training feild</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<script>
+  const track = document.querySelector('.carousel-track');
+  const slides = Array.from(track.children);
+  const nextBtn = document.querySelector('.carousel-btn.next');
+  const prevBtn = document.querySelector('.carousel-btn.prev');
+  let index = 0;
+
+  function updateSlide(position) {
+    track.style.transform = `translateX(-${position * 100}%)`;
+  }
+
+  nextBtn.addEventListener('click', () => {
+    index = (index + 1) % slides.length;
+    updateSlide(index);
+  });
+
+  prevBtn.addEventListener('click', () => {
+    index = (index - 1 + slides.length) % slides.length;
+    updateSlide(index);
+  });
+
+  // Auto-slide every 5s
+  setInterval(() => {
+    index = (index + 1) % slides.length;
+    updateSlide(index);
+  }, 5000);
+</script>
+
+
+
+ <!-- Footer -->
+  <section class="M-FIT-footer">
+    <div class="footer-container">
+      <div class="footer-col brand-col">
+        <div class="footer-logo">
+          <img src="assets/images/m-fit-gym-logo.jpg" alt="m-fit-gym-logo">
+          <span>M-FIT GYM</span>
+        </div>
+        <p>Elevate your fitness journey with us. Our state-of-the-art facility features a full range of cardio equipment and a dedicated strength training zone. 
+          you have everything you need to transform your body.</p>
+        <p class="contact-item">📍 1st Floor, Nakshatra Tower, Kudal, near Sindhudurg Bank.<br>Beside Sindhudurg Bank, near Mathewada</p>
+        <p class="contact-number">+91 9011379090</p>
+      </div>
+      
+      <div class="footer-col links-col">
+        <h3>QUICK LINKS</h3>
+        <ul class="footer-links">
+          <li><a href="about.html">➤ About Us</a></li>
+          <li><a href="https://wa.me/9011379090?text=Hi%20I%20want%20to%20join%20M-FIT%20Gym">➤ Contact</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col links-col">
+        <h3>USEFUL LINKS</h3>
+        <ul class="footer-links">
+           <li><a href="ai-tools.html">AI Tools</a></li>
+        <li><a href="bmi.html">BMI Calculator</a></li>
+        <li><a href="diet.html">AI Diet Plan</a></li>
+        <li><a href="nutrition.html">Nutrition Hub</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col social-col">
+        <h3>FOLLOW US</h3>
+        <div class="social-icons">
+          <a href="https://www.instagram.com/m_fitgym_kudal?igsh=MTd4MmZkcndibTZvZA==" target="_blank"><img src="assets/images/instalogo.png" alt="Instagram"></a>
+        </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2024 M-FIT & Fitness. All rights reserved.</p>
+    </div>
+  </section>
+
+
+  <script src="js/loadHeader.js"></script>
+</body>
+</html>

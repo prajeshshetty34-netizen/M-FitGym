@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Diet Plan</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="header-placeholder"></div>
+
+  <section class="diet-section">
+    <div class="container">
+      <h1>🥗 Diet Plans</h1>
+      <p>Enter your details and we will generate a personalized diet for you!</p>
+
+      <!-- Form -->
+      <form id="dietForm" class="diet-form">
+        <label>Goal:</label>
+        <select id="goal" required>
+          <option value="weight loss">Weight Loss</option>
+          <option value="muscle gain">Muscle Gain</option>
+          <option value="fitness">General Fitness</option>
+        </select>
+
+        <label>Diet Preference:</label>
+        <select id="dietType" required>
+          <option value="vegetarian">Vegetarian</option>
+          <option value="non-vegetarian">Non-Vegetarian</option>
+          <option value="vegan">Vegan</option>
+        </select>
+
+        <label>Age:</label>
+        <input type="number" id="age" required>
+
+        <label>Weight (kg):</label>
+        <input type="number" id="weight" required>
+
+        <label>Height (cm):</label>
+        <input type="number" id="height" required>
+
+        <button type="submit">Generate Diet Plan</button>
+      </form>
+
+    
+
+<div id="dietResult" class="diet-result"></div>
+
+      <!-- History of Saved Plans -->
+      <div id="planHistory">
+        <h2>Your Past Plans</h2>
+        <ul id="historyList"></ul>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
+  <script>
+    const BACKEND_URL = "http://localhost:3000"; 
+    const converter = new showdown.Converter();
+
+    document.getElementById("dietForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const goal = document.getElementById("goal").value;
+      const dietType = document.getElementById("dietType").value;
+      const age = document.getElementById("age").value;
+      const weight = document.getElementById("weight").value;
+      const height = document.getElementById("height").value;
+
+      document.getElementById("dietResult").innerHTML = "⏳ Generating your AI diet plan...";
+
+      const prompt = `Create a detailed and structured ${dietType} diet plan for a person with goal: ${goal}, 
+      age: ${age}, weight: ${weight}kg, height: ${height}cm. 
+      The response should be in Markdown format with headings, bold text, and bullet points for each meal (Breakfast, Lunch, Dinner) and snack. Include a section for daily caloric and macro goals.`;
+      
+      try {
+        const response = await fetch(`${BACKEND_URL}/diet`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt })
+        });
+
+        const data = await response.json();
+        const markdown = data.reply;
+        const html = converter.makeHtml(markdown);
+
+        document.getElementById("dietResult").innerHTML = html;
+
+        // Save the plan to localStorage
+        const timestamp = new Date().toLocaleString();
+        const plan = {
+          timestamp,
+          goal,
+          dietType,
+          planText: markdown,
+        };
+
+        let savedPlans = JSON.parse(localStorage.getItem('dietPlans')) || [];
+        savedPlans.push(plan);
+        localStorage.setItem('dietPlans', JSON.stringify(savedPlans));
+
+        displaySavedPlans();
+
+      } catch (error) {
+        console.error("Error:", error);
+        document.getElementById("dietResult").innerHTML = "❌ Error generating diet plan. Please check your console for details.";
+      }
+    });
+
+    function displaySavedPlans() {
+      const historyList = document.getElementById('historyList');
+      historyList.innerHTML = ''; // Clear previous list
+
+      let savedPlans = JSON.parse(localStorage.getItem('dietPlans')) || [];
+
+      if (savedPlans.length > 0) {
+        savedPlans.forEach((plan, index) => {
+          const listItem = document.createElement('li');
+          listItem.classList.add('history-item');
+          listItem.innerHTML = `
+            <span class="plan-details">
+              <strong>Plan ${index + 1}:</strong> ${plan.goal} (${plan.dietType})
+            </span>
+            <span class="plan-timestamp">
+              ${plan.timestamp}
+            </span>
+          `;
+          listItem.addEventListener('click', () => {
+            document.getElementById("dietResult").innerHTML = converter.makeHtml(plan.planText);
+          });
+          historyList.appendChild(listItem);
+        });
+      } else {
+        historyList.innerHTML = '<li class="no-plans">No saved plans yet.</li>';
+      }
+    }
+
+    // Load plans on page load
+    window.onload = displaySavedPlans;
+  </script>
+
+  
+
+
+<script src="js/loadHeader.js"></script>
+
+</body>
+</html>

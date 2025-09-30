@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <title>AI Gym Chatbot</title>
+  <link rel="stylesheet" href="css/style.css">
+  
+</head>
+<body>
+
+  <div id="header-placeholder"></div>
+  <section class="chatbot-section">
+    <div class="chatbot-container">
+      <h1>💬 Talk to AI GymBot</h1>
+      <div class="chat-window" id="chatWindow">
+        <p class="bot-message"><strong>GymBot:</strong> Hi there! I'm AI GymBot. How can I help you today? I can tell you about our features, like BMI calculation, diet plans, and more!</p>
+      </div>
+     
+       <div class="chatbot-input-area">
+        <input type="text" id="userInput" placeholder="Ask about fitness, diet..." onkeypress="handleKeyPress(event)" />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  // --- Configuration ---
+  // This URL points to your backend server.
+  // IMPORTANT: If you deploy your backend, you MUST change 'http://localhost:3000'
+  // to your deployed server's URL (e.g., 'https://your-gemini-proxy.onrender.com').
+  const BACKEND_URL = 'http://localhost:3000';
+
+  // --- Chat Logic ---
+  async function sendMessage() {
+    const inputField = document.getElementById("userInput");
+    const userMessage = inputField.value.trim();
+    const chatWindow = document.getElementById("chatWindow");
+
+    if (userMessage === "") return; // Prevent sending empty messages
+
+  // Display user's message immediately (safe)
+  const userP = document.createElement('p');
+  userP.className = 'user-message';
+  const userStrong = document.createElement('strong');
+  userStrong.textContent = 'You: ';
+  userP.appendChild(userStrong);
+  userP.appendChild(document.createTextNode(userMessage));
+  chatWindow.appendChild(userP);
+    inputField.value = ""; // Clear the input field
+    chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
+
+    // Display a "thinking" message from the bot
+    const thinkingMessage = document.createElement('p');
+    thinkingMessage.classList.add('bot-message');
+    thinkingMessage.innerHTML = '<strong>GymBot:</strong> Thinking...';
+    chatWindow.appendChild(thinkingMessage);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    try {
+      // Send the user's message to your backend proxy server
+      const response = await fetch(`${BACKEND_URL}/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userMessage }), // Send the message as JSON
+      });
+
+      // Check if the response was successful
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Server error: ${response.status} - ${errorData.error || response.statusText}`);
+      }
+
+      // Parse the JSON response from your backend
+      const data = await response.json();
+      const botReply = data.reply; // Get the AI's reply
+
+      // Remove the "thinking" message
+      if (chatWindow.contains(thinkingMessage)) {
+        chatWindow.removeChild(thinkingMessage);
+      }
+
+  // Display the AI's response (safe)
+  const botP = document.createElement('p');
+  botP.className = 'bot-message';
+  const botStrong = document.createElement('strong');
+  botStrong.textContent = 'GymBot: ';
+  botP.appendChild(botStrong);
+  botP.appendChild(document.createTextNode(botReply));
+  chatWindow.appendChild(botP);
+
+    } catch (error) {
+      console.error('Error communicating with backend:', error);
+      // Remove thinking message and show an error to the user
+      if (chatWindow.contains(thinkingMessage)) {
+        chatWindow.removeChild(thinkingMessage);
+      }
+  const errP = document.createElement('p');
+  errP.className = 'bot-message error';
+  const errStrong = document.createElement('strong');
+  errStrong.textContent = 'GymBot: ';
+  errP.appendChild(errStrong);
+  errP.appendChild(document.createTextNode(`Sorry, I'm currently unable to connect. Please try again later. (Error: ${error.message})`));
+  chatWindow.appendChild(errP);
+    } finally {
+      chatWindow.scrollTop = chatWindow.scrollHeight; // Ensure scroll to bottom
+    }
+  }
+
+  // Function to handle Enter key press in the input field
+  function handleKeyPress(event) {
+    if (event.key === "Enter") {
+      sendMessage();
+    }
+  }
+</script>
+ <script>
+  if (!localStorage.getItem("loggedIn")) {
+    window.location.href = "login.html";
+  }
+</script>
+
+<script src="js/loadHeader.js"></script>
+
+</body>
+</html>

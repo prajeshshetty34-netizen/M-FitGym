@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MFIT & Fitness</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+  <nav>
+    <div class="logo">
+      <a href="index.html">
+        <img src="assets/images/m-fit-gym-logo.jpg" alt="M-Fit Gym Logo" class="site-logo">
+        <p><strong>M-FIT GYM</strong></p>
+      </a>
+    </div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="personal-training.html">Personal Training</a></li>
+      <li><a href="nutrition.html">Nutrition</a></li>
+      <li><a href="ai-tools.html">AI Tools</a></li>
+      <li class="auth-links">
+        <a href="login.html" id="loginLink">Login</a>
+        <a href="#" onclick="logout()" id="logoutLink" style="display:none;">Logout</a>
+      </li>
+    </ul>
+  </nav>
+</header>
+<script>
+  function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "login.html";
+  }
+</script>
+
+</body>
+</html>
