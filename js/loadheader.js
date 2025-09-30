@@ -53,6 +53,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 } catch (err) { console.warn('Logout failed', err); }
                 window.location.href = 'login.html';
             };
+
+            // padding-test debug element removed (no longer injected site-wide)
         })
         .catch(error => {
             console.error('Error loading header:', error);

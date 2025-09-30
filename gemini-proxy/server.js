@@ -13,43 +13,92 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
 const port = process.env.PORT || 3000;
-// FRONTEND_ORIGIN may contain a comma-separated list of allowed origins, e.g.
-// FRONTEND_ORIGIN=http://localhost:5500,http://127.0.0.1:5500
+
+// Validate required environment variables
+const requiredEnvVars = ['GEMINI_API_KEY', 'JWT_SECRET'];
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    console.error(`Missing required environment variable: ${envVar}`);
+    process.exit(1);
+  }
+}
+
+// FRONTEND_ORIGIN may contain a comma-separated list of allowed origins
 const FRONTEND = process.env.FRONTEND_ORIGIN || 'http://localhost:5500';
 const ALLOWED_ORIGINS = FRONTEND.split(',').map(s => s.trim()).filter(Boolean);
 
-// Basic security
-app.use(helmet());
-app.use(express.json());
+// Enhanced security headers
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://www.gstatic.com", "https://cdn.jsdelivr.net"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https:"],
+      connectSrc: ["'self'", "https://generativelanguage.googleapis.com"]
+    }
+  },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  }
+}));
+
+app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
-// Use a dynamic origin function so we can allow multiple origins (localhost and 127.0.0.1)
+
+// CORS with strict origin checking
 app.use(cors({
   origin: function(origin, callback) {
-    // If no origin (e.g., same-origin or non-browser tool), allow
+    // Allow requests with no origin (mobile apps, postman, etc.)
     if (!origin) return callback(null, true);
-    if (ALLOWED_ORIGINS.indexOf(origin) !== -1) return callback(null, true);
-    // As a fallback, allow matching localhost with same port if configured
+    
+    if (ALLOWED_ORIGINS.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+    
+    // Enhanced origin validation
     try {
       const url = new URL(origin);
-      const hostport = `${url.hostname}:${url.port}`;
       for (const allowed of ALLOWED_ORIGINS) {
         try {
-          const a = new URL(allowed);
-          if (`${a.hostname}:${a.port}` === hostport) return callback(null, true);
-        } catch (e) { /* ignore */ }
+          const allowedUrl = new URL(allowed);
+          if (url.hostname === allowedUrl.hostname && url.port === allowedUrl.port) {
+            return callback(null, true);
+          }
+        } catch (e) { /* ignore malformed URLs */ }
       }
-    } catch (e) { /* ignore */ }
-    // Respond with false (not allowed) rather than an error to let the CORS middleware handle preflight properly
-    return callback(null, false);
+    } catch (e) { /* ignore malformed origin */ }
+    
+    console.warn(`CORS: Blocked origin ${origin}`);
+    return callback(new Error('Not allowed by CORS'), false);
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
 }));
+
 app.set('trust proxy', 1);
 
-// Rate limiter
-app.use(rateLimit({ windowMs: 60 * 1000, max: 120 }));
+// Enhanced rate limiting
+app.use(rateLimit({ 
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP',
+  standardHeaders: true,
+  legacyHeaders: false
+}));
 
-// Initialize Gemini client (if key provided)
+// API-specific rate limiting
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 20, // limit each IP to 20 API calls per minute
+  message: 'Too many API requests, please try again later'
+});
+
+// Initialize Gemini client with error handling
 let genAI = null;
 if (process.env.GEMINI_API_KEY) {
   try {
@@ -57,6 +106,8 @@ if (process.env.GEMINI_API_KEY) {
   } catch (err) {
     console.warn('Failed to initialize Gemini client:', err.message);
   }
+} else {
+  console.warn('GEMINI_API_KEY not provided - AI features will be disabled');
 }
 
 // Initialize SQLite DB
@@ -111,9 +162,13 @@ app.post('/api/login',
       const match = await bcrypt.compare(password, user.password_hash);
       if (!match) return res.status(401).json({ error: 'Invalid credentials' });
 
-      // Issue JWT
+      // Issue JWT with secure secret
+      const jwtSecret = process.env.JWT_SECRET;
+      if (!jwtSecret || jwtSecret === 'dev_secret_change') {
+        throw new Error('Invalid JWT secret configuration');
+      }
       const payload = { userId: user.id };
-      const token = jwt.sign(payload, process.env.JWT_SECRET || 'dev_secret_change', { expiresIn: '7d' });
+      const token = jwt.sign(payload, jwtSecret, { expiresIn: '7d' });
 
       // Set HttpOnly cookie
       res.cookie('token', token, {
@@ -135,7 +190,11 @@ app.get('/api/me', async (req, res) => {
   const token = req.cookies && req.cookies.token;
   if (!token) return res.status(401).json({ error: 'Not authenticated' });
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET || 'dev_secret_change');
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret || jwtSecret === 'dev_secret_change') {
+      return res.status(500).json({ error: 'Server configuration error' });
+    }
+    const payload = jwt.verify(token, jwtSecret);
     const user = await db.get('SELECT id, name, email, created_at FROM users WHERE id = ?', [payload.userId]);
     if (!user) return res.status(404).json({ error: 'User not found' });
     return res.json({ user });
@@ -151,10 +210,16 @@ app.post('/api/logout', (req, res) => {
 });
 
 // Chat endpoint (proxied to Gemini if configured)
-app.post('/chat', async (req, res) => {
+app.post('/chat', apiLimiter, [
+  body('message').isLength({ min: 1, max: 1000 }).trim().escape()
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ error: 'Invalid message format' });
+  }
+  
   const userMessage = req.body.message;
-  if (!userMessage) return res.status(400).json({ error: 'Message is required' });
-  if (!genAI) return res.status(503).json({ error: 'AI not configured' });
+  if (!genAI) return res.status(503).json({ error: 'AI service not available' });
 
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
@@ -169,7 +234,7 @@ app.post('/chat', async (req, res) => {
 });
 
 // Basic endpoints for diet/workout proxy if needed
-app.post('/diet', async (req, res) => {
+app.post('/diet', apiLimiter, async (req, res) => {
   if (!genAI) return res.status(503).json({ error: 'AI not configured' });
   try {
     const { prompt } = req.body;
@@ -183,7 +248,7 @@ app.post('/diet', async (req, res) => {
   }
 });
 
-app.post('/workout', async (req, res) => {
+app.post('/workout', apiLimiter, async (req, res) => {
   if (!genAI) return res.status(503).json({ error: 'AI not configured' });
   try {
     const { gender, age, goal, level } = req.body;

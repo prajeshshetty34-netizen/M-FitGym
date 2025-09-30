@@ -19,7 +19,7 @@
 
   <!-- Why Personal Training -->
 <section class="why-training">
-  <div class="container">
+  <div class="container content-padding">
     <div class="benefits-list">
       <!-- LEFT SIDE: Heading + List -->
       <div class="benefits-text">
@@ -135,31 +135,88 @@
   </section>
 
 <script>
-  const track = document.querySelector('.carousel-track');
-  const slides = Array.from(track.children);
-  const nextBtn = document.querySelector('.carousel-btn.next');
-  const prevBtn = document.querySelector('.carousel-btn.prev');
-  let index = 0;
+  (function() {
+    const track = document.querySelector('.carousel-track');
+    let slides = Array.from(track.children);
+    const nextBtn = document.querySelector('.carousel-btn.next');
+    const prevBtn = document.querySelector('.carousel-btn.prev');
+    const carousel = document.querySelector('.carousel');
+    let index = 1; // we will place pointer at the real first after prepending clone
+    let autoplayTimer = null;
+    let isTransitioning = false;
 
-  function updateSlide(position) {
-    track.style.transform = `translateX(-${position * 100}%)`;
-  }
+    // Create clones for seamless looping
+    const firstClone = slides[0].cloneNode(true);
+    const lastClone = slides[slides.length - 1].cloneNode(true);
+    firstClone.classList.add('clone');
+    lastClone.classList.add('clone');
+    track.appendChild(firstClone);
+    track.insertBefore(lastClone, track.firstChild);
 
-  nextBtn.addEventListener('click', () => {
-    index = (index + 1) % slides.length;
-    updateSlide(index);
-  });
+    // Refresh slides list after cloning
+    slides = Array.from(track.children);
 
-  prevBtn.addEventListener('click', () => {
-    index = (index - 1 + slides.length) % slides.length;
-    updateSlide(index);
-  });
+    // Start showing the real first slide (index 1 because of prepended lastClone)
+    track.style.transition = 'none';
+    track.style.transform = `translateX(-${index * 100}%)`;
 
-  // Auto-slide every 5s
-  setInterval(() => {
-    index = (index + 1) % slides.length;
-    updateSlide(index);
-  }, 5000);
+    // Force reflow then enable transition
+    requestAnimationFrame(() => { track.style.transition = 'transform 0.6s cubic-bezier(.22,.98,.32,1)'; });
+
+    function goTo(i) {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      index = i;
+      track.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    track.addEventListener('transitionend', () => {
+      isTransitioning = false;
+      // If we're at the cloned first (after last real), jump to real first
+      if (slides[index].classList.contains('clone') && index === slides.length - 1) {
+        // moved to firstClone; jump to real first
+        track.style.transition = 'none';
+        index = 1;
+        track.style.transform = `translateX(-${index * 100}%)`;
+        // re-enable transition
+        requestAnimationFrame(() => { track.style.transition = 'transform 0.6s cubic-bezier(.22,.98,.32,1)'; });
+      }
+      // If we're at the cloned last (before first real), jump to real last
+      if (slides[index].classList.contains('clone') && index === 0) {
+        track.style.transition = 'none';
+        index = slides.length - 2;
+        track.style.transform = `translateX(-${index * 100}%)`;
+        requestAnimationFrame(() => { track.style.transition = 'transform 0.6s cubic-bezier(.22,.98,.32,1)'; });
+      }
+    });
+
+    // Controls
+    nextBtn.addEventListener('click', () => { pauseAutoplay(); goTo(index + 1); });
+    prevBtn.addEventListener('click', () => { pauseAutoplay(); goTo(index - 1); });
+
+    // Touch support
+    let startX = 0; let deltaX = 0;
+    track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
+    track.addEventListener('touchmove', e => { deltaX = e.touches[0].clientX - startX; });
+    track.addEventListener('touchend', () => {
+      if (Math.abs(deltaX) > 40) {
+        if (deltaX < 0) goTo(index + 1); else goTo(index - 1);
+      }
+      deltaX = 0;
+    });
+
+    // Autoplay
+    function startAutoplay(){ if (autoplayTimer) clearInterval(autoplayTimer); autoplayTimer = setInterval(()=> goTo(index + 1), 4000); }
+    function pauseAutoplay(){ if(autoplayTimer) clearInterval(autoplayTimer); autoplayTimer = null; }
+
+    carousel.addEventListener('mouseenter', pauseAutoplay);
+    carousel.addEventListener('mouseleave', startAutoplay);
+
+    // Start
+    startAutoplay();
+    // Recalculate on resize (no percentage change required, but keep responsive)
+    window.addEventListener('resize', () => { track.style.transition = 'none'; track.style.transform = `translateX(-${index * 100}%)`; requestAnimationFrame(()=>{ track.style.transition = 'transform 0.6s cubic-bezier(.22,.98,.32,1)'; }); });
+  })();
 </script>
 
 

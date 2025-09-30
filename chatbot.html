@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Gym Chatbot</title>
   <link rel="stylesheet" href="css/style.css">
-  
+  <script src="js/config.js"></script>
 </head>
 <body>
 
@@ -25,10 +26,8 @@
 
   <script>
   // --- Configuration ---
-  // This URL points to your backend server.
-  // IMPORTANT: If you deploy your backend, you MUST change 'http://localhost:3000'
-  // to your deployed server's URL (e.g., 'https://your-gemini-proxy.onrender.com').
-  const BACKEND_URL = 'http://localhost:3000';
+  // Use environment-based configuration
+  const BACKEND_URL = window.APP_CONFIG?.apiUrl || 'http://localhost:3000';
 
   // --- Chat Logic ---
   async function sendMessage() {

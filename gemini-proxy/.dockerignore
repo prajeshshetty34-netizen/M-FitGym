@@ -1,0 +1,9 @@
+node_modules
+.git
+.env
+*.sqlite
+logs
+server.log
+server.err
+npm-debug.log*
+.vscode

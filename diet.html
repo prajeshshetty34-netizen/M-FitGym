@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Diet Plan</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/config.js"></script>
 </head>
 <body>
 
@@ -57,7 +58,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
   <script>
-    const BACKEND_URL = "http://localhost:3000"; 
+    // Use environment-based configuration
+    const BACKEND_URL = window.APP_CONFIG?.apiUrl || "http://localhost:3000";
     const converter = new showdown.Converter();
 
     document.getElementById("dietForm").addEventListener("submit", async function(e) {

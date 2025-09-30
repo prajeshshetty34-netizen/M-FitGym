@@ -6,10 +6,10 @@
     --primary-color: #00CC88; /* Vibrant Teal/Green for success/CTA/Highlights */
     --secondary-color: #FF6B6B; /* Soft Red for errors/accents (e.g., in About section) */
     --accent-color: #facc15; /* Gold/Yellow for specific login highlights */
-    --dark-bg: #0F172A; /* Deep Blue/Black for body background (Slate-900 like) */
-    --text-light: #E2E8F0; /* Off-white for readability */
-    --text-dark: #111;
-    --card-bg: #1A2233; /* Darker card background for contrast */
+  --dark-bg: #000000; /* Pure black background for all pages */
+  --text-light: #E2E8F0; /* Off-white for readability */
+  --text-dark: #111;
+  --card-bg: #0A0A0A; /* Slightly lighter than black for cards */
     --input-bg: #2C3545; /* Slightly lighter input background */
     --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.4);
     --shadow-deep: 0 10px 30px rgba(0, 0, 0, 0.6);
@@ -48,6 +48,12 @@ body {
   max-width: 1200px;
   margin: auto;
   padding: 60px 0; /* Adjusted padding to be only vertical */
+}
+
+/* Utility padding to apply consistent inner spacing across pages */
+.content-padding {
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
 /* Base Heading Styles */
@@ -398,9 +404,21 @@ nav ul li a:hover {
 .about-hero .hero-content {
   position: relative;
   z-index: 2;
-  max-width: 800px;
-  padding: 20px;
 }
+
+/* --- Padding test helper (visible on homepage) --- */
+.padding-test {
+  border: 2px dashed rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.02);
+  color: var(--text-light);
+  padding: 28px; /* test value you can adjust */
+  border-radius: 10px;
+  max-width: 720px;
+  margin: 20px auto;
+  text-align: center;
+  font-weight: 600;
+}
+
 
 .about-hero h1 {
   font-size: 3.5rem;
@@ -430,6 +448,45 @@ nav ul li a:hover {
   text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
   margin-bottom: 20px;
 }
+
+/* Nutrition coach spacing improvements */
+.coach-profile-card {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  background: var(--card-bg);
+  padding: 24px;
+  border-radius: 12px;
+}
+
+.coach-profile-card .coach-details {
+  flex: 1;
+}
+
+.coach-profile-card ul {
+  margin-top: 8px;
+  margin-bottom: 12px;
+  padding-left: 20px;
+}
+
+.how-it-works-section .steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.how-it-works-section .step-item {
+  background: rgba(255,255,255,0.02);
+  padding: 16px 36px 16px 16px; /* more right padding */
+  border-radius: 10px;
+}
+
+.how-it-works-section .step-number {
+  font-weight: 800;
+  margin-right: 10px;
+  color: var(--primary-color);
+}
+
 
 .about-intro p {
   font-size: 1.2rem;
@@ -978,6 +1035,65 @@ nav ul li a:hover {
   border-radius: 12px;
 }
 
+/* Carousel styles for GYM Member Transformations */
+.carousel {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+  overflow: hidden;
+  padding: 20px 0;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 20px;
+  transition: transform 0.6s cubic-bezier(.22,.98,.32,1);
+  will-change: transform;
+}
+
+.carousel-slide {
+  min-width: 100%;
+  flex: 0 0 100%;
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  color: var(--text-light);
+  text-align: center;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: rgba(255,255,255,0.06);
+  color: var(--text-light);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+}
+
+.carousel-btn.prev { left: 12px; }
+.carousel-btn.next { right: 12px; }
+
+.carousel-btn:hover { background: rgba(255,255,255,0.12); }
+
+@media (min-width: 900px) {
+  .carousel-slide { padding: 28px; }
+}
+
+
 /* Trainers */
 .trainers {
   padding: 80px 20px;
@@ -1426,6 +1542,69 @@ nav ul li a:hover {
 }
 
 .workout-card {
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    max-width: 1000px;
+    margin: 20px auto 0;
+  }
+
+  /* Animated testimonial cards with improved padding and layout */
+  .testimonial-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: var(--card-bg);
+    padding: 28px 48px 28px 20px; /* increased right padding for breathing room */
+    border-radius: 12px;
+    box-shadow: 0 10px 26px rgba(0,0,0,0.55);
+    color: var(--text-light);
+    transform: translateY(12px);
+    opacity: 0;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    text-align: left;
+  }
+
+  .testimonial-card img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex: 0 0 80px;
+  }
+
+  .testimonial-card p {
+    margin: 0;
+    color: var(--text-light);
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  /* Quotation marks */
+  .testimonial-card p::before { content: "\201C"; margin-right: 6px; font-size: 1.4rem; vertical-align: baseline; }
+  .testimonial-card p::after { content: "\201D"; margin-left: 6px; font-size: 1.4rem; vertical-align: baseline; }
+
+  /* Entrance animation */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .testimonials-grid .testimonial-card { animation: fadeUp 600ms ease forwards; }
+  .testimonials-grid .testimonial-card:nth-child(1) { animation-delay: 120ms; }
+  .testimonials-grid .testimonial-card:nth-child(2) { animation-delay: 260ms; }
+  .testimonials-grid .testimonial-card:nth-child(3) { animation-delay: 400ms; }
+
+  .testimonial-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 18px 48px rgba(0,0,0,0.65);
+  }
+
+  @media (max-width: 700px) {
+    .testimonial-card { padding: 18px; gap: 12px; }
+    .testimonial-card img { width: 64px; height: 64px; flex: 0 0 64px; }
+  }
     background: var(--card-bg);
     padding: 30px 25px;
     border-radius: 16px;
